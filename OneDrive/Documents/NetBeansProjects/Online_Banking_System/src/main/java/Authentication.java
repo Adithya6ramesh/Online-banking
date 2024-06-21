@@ -1,4 +1,7 @@
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import javax.swing.UIManager;
 
 /*
@@ -11,12 +14,16 @@ import javax.swing.UIManager;
  * @author hp
  */
 public class Authentication extends javax.swing.JFrame {
-
+Connection conn;
+ResultSet rs;
+PreparedStatement pst;
     /**
      * Creates new form Authentication
      */
     public Authentication() {
+        super("Login");
         initComponents();
+        conn=javaconnect.ConncrDb();
     }
 
     /**
@@ -139,6 +146,35 @@ public class Authentication extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
+        String sql="select e* from Accounts here Acc=? and Pin=?";
+        try{
+            pst=conn.prepareStatement(sql);
+            pst.setString(1, jTextField1.getText());
+            pst.setString(2, jTextField2.getText());
+            rs=pst.executeQuery();
+            if(rs.next()){
+                setVisible(false);
+                Loading ob=new Loading();
+                ob.setVisible(true);
+                rs.close();
+                pst.close();
+                      
+            }
+            else{
+                JOptionPane.shovMessageDialog(null, "Incorrect Credential");
+            }
+            catch(Exception e){
+                     JOptionPane.shovMessageDialog(null, e);
+                    }
+            finally{
+                    try{
+                     rs.close();
+                     pst.close();
+                    }
+                    catch(Exception e)
+                    {
+                    }
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
